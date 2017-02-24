@@ -1,6 +1,8 @@
 # yjp-flamegraphs
 
   Utility for generating flame graphs from yjp snapshots
+  
+  Tested with data generated from yjp version 2014
 
   Usage:
   1. generate csv dump via `java -jar -Dexport.call.tree.cpu -Dexport.csv ~/yjp/lib/yjp.jar -export ~/Snapshots/abc.snapshot ~/TempFolderName/`
