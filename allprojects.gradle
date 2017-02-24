@@ -3,6 +3,8 @@ allprojects {
     apply plugin: 'idea'
     apply plugin: 'kotlin'
     apply plugin: 'maven'
+    apply plugin: 'com.github.johnrengelman.shadow'
+    apply plugin: 'application'
 
     group = 'com.github.morj.yjp-flamegraphs'
     sourceCompatibility = 1.7
@@ -34,5 +36,19 @@ allprojects {
     artifacts {
         archives jar
         archives sourcesJar
+    }
+
+    mainClassName = "com.github.morj.flamegraphs.MainKt"
+
+    shadowJar {
+        mergeServiceFiles()
+        exclude 'META-INF/*.DSA'
+        exclude 'META-INF/*.RSA'
+    }
+
+    jar {
+        manifest {
+            attributes 'Main-Class': mainClassName
+        }
     }
 }

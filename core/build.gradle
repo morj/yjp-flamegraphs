@@ -1,5 +1,7 @@
 description 'Console tool and core utilities'
 
 dependencies {
+    compile project(':')
+    
     testCompile "junit:junit:$junit_version"
 }
