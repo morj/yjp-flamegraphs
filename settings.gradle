@@ -1,0 +1,3 @@
+rootProject.name = 'yjp-flamegraphs'
+
+include ':core'

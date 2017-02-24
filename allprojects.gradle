@@ -1,0 +1,38 @@
+allprojects {
+    apply plugin: 'java'
+    apply plugin: 'idea'
+    apply plugin: 'kotlin'
+    apply plugin: 'maven'
+
+    group = 'com.github.morj.yjp-flamegraphs'
+    sourceCompatibility = 1.7
+    version = 'dev'
+
+    repositories {
+        mavenCentral()
+    }
+
+    tasks.withType(Test) {
+        testLogging.showStandardStreams = true
+        outputs.upToDateWhen { false }
+
+        System.getProperties().keySet().findAll {it.startsWith('test.')}.each {
+            jvmArgs "-D${it.replace('test.','')}=${System.getProperty(it)}"
+
+        }
+    }
+
+    task sourcesJar(type: Jar, dependsOn: classes) {
+        classifier = 'sources'
+        from sourceSets.main.allSource
+    }
+
+    idea {
+        module { downloadSources = true }
+    }
+
+    artifacts {
+        archives jar
+        archives sourcesJar
+    }
+}
