@@ -11,17 +11,25 @@ val usage = """
   Usage:
   1. generate csv dump via `java -jar -Dexport.call.tree.cpu -Dexport.csv ~/yjp/lib/yjp.jar -export ~/Snapshots/abc.snapshot ~/TempFolderName/`
   2. run this program via `java -jar yjp-flamegraphs.jar [TempFolderName] [ThreadName] > /path/to/stacks-dump.txt`
+     [ThreadName] is an optional parameter and can be omitted, in this case the flame graph will aggregate all samples
   3. generate flame graph with https://github.com/brendangregg/FlameGraph
      `./flamegraph.pl --countname=millis --width=1900 /path/to/stacks-dump.txt > /path/to/stacks.svg`
 """
 
 fun main(args: Array<String>) {
-    if (args.size < 2) {
+    if (args.isEmpty()) {
         println(usage)
         return
     }
 
-    val reader = BufferedReader(InputStreamReader(FileInputStream(args[0] + File.separator + "Call-tree--by-thread.csv"), "UTF-8"))
+    val allThreadsTogether = args.size == 1
+    val inputFileName = if (allThreadsTogether) {
+        "Call-tree--all-threads-together.csv"
+    } else {
+        "Call-tree--by-thread.csv"
+    }
+
+    val reader = BufferedReader(InputStreamReader(FileInputStream(args[0] + File.separator + inputFileName), "UTF-8"))
     val writer = BufferedWriter(OutputStreamWriter(System.out, "UTF-8"))
 
     var consume = false
@@ -39,7 +47,8 @@ fun main(args: Array<String>) {
 
         if (values[2].isEmpty()) {
             stack[0] = name.split(' ').first()
-            consume = name.startsWith(args[1])
+
+            consume = allThreadsTogether || name.startsWith(args[1])
             if (consume) {
                 found = true
             }
@@ -63,7 +72,11 @@ fun main(args: Array<String>) {
     }
 
     if (!found) {
-        System.err.println("No threads with name starting with ${args[1]}")
+        System.err.println(if (allThreadsTogether) {
+            "No threads with name starting with ${args[1]}"
+        } else {
+            "No data found"
+        })
     }
 
     writer.close()
