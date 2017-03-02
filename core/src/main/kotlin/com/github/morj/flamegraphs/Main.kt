@@ -4,6 +4,7 @@ import java.io.*
 
 val functionArgs = "\\s*\\([^\\)]*\\)\\s*".toRegex()
 val quote = "\""
+val noHeaders: Boolean get() = System.getProperty("no.headers") != null
 
 val usage = """
   Utility for generating flame graphs from yjp snapshots
@@ -32,14 +33,14 @@ fun main(args: Array<String>) {
     val reader = BufferedReader(InputStreamReader(FileInputStream(args[0] + File.separator + inputFileName), "UTF-8"))
     val writer = BufferedWriter(OutputStreamWriter(System.out, "UTF-8"))
 
-    var consume = false
-    var found = false
+    var consume = noHeaders
+    var found = consume
     val stack = arrayListOf("")
 
     while (true) {
         val line = reader.readLine() ?: break
         val values = line.split("\",\\s?\"".toRegex()).dropLastWhile(String::isEmpty).toTypedArray()
-        if (values.size < 4 || values[2].startsWith("O")) {
+        if (values.size < 4 || values[2].startsWith("O") || values[2].startsWith("S")) {
             continue
         }
 
