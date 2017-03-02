@@ -73,9 +73,9 @@ fun main(args: Array<String>) {
 
     if (!found) {
         System.err.println(if (allThreadsTogether) {
-            "No threads with name starting with ${args[1]}"
-        } else {
             "No data found"
+        } else {
+            "No threads with name starting with ${args[1]}"
         })
     }
 
