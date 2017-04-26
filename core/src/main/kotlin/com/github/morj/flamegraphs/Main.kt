@@ -4,7 +4,8 @@ import java.io.*
 
 val functionArgs = "\\s*\\([^\\)]*\\)\\s*".toRegex()
 val quote = "\""
-val noHeaders: Boolean get() = System.getProperty("no.headers") != null
+val noHeadersProp = "no.headers"
+val noHeaders: Boolean get() = System.getProperty(noHeadersProp) != null
 
 val usage = """
   Utility for generating flame graphs from yjp snapshots
@@ -74,7 +75,7 @@ fun main(args: Array<String>) {
 
     if (!found) {
         System.err.println(if (allThreadsTogether) {
-            "No data found"
+            "No data found\n\nTry using -D$noHeadersProp"
         } else {
             "No threads with name starting with ${args[1]}"
         })
